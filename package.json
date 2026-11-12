@@ -1,0 +1,13 @@
+{
+  "name": "ceni-hors-ligne-mobile",
+  "version": "2.6.0",
+  "private": true,
+  "description": "CENI Hors-ligne (saisie 1) : enveloppe Android (Capacitor) autour de l'application web inchangée du dossier web/",
+  "dependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/cli": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/filesystem": "^7.0.0",
+    "@capacitor/share": "^7.0.0"
+  }
+}

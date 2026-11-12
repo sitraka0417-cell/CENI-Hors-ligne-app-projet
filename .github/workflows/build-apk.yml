@@ -1,0 +1,60 @@
+name: Build APK (CENI Hors-ligne)
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      APP_VERSION: "2.6"
+      APP_CODE: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Vérifier que web/ est identique à l'original (SHA-256)
+        run: cd web && sha256sum -c ../SHA256SUMS.txt
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Préparer www/ (copie exacte de web/ + pont d'export)
+        run: python3 native/prepare_www.py
+
+      - name: Installer Capacitor
+        run: npm install --no-audit --no-fund
+
+      - name: Créer le projet Android et y copier l'application
+        run: |
+          npx cap add android
+          npx cap sync android
+          python3 native/patch_android.py
+
+      - name: Compiler (release)
+        working-directory: android
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Aligner et signer avec la clé fixe du dépôt
+        run: |
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          UNSIGNED=$(ls android/app/build/outputs/apk/release/*.apk | head -1)
+          mkdir -p out
+          "$BT/zipalign" -p -f 4 "$UNSIGNED" out/aligned.apk
+          "$BT/apksigner" sign --ks signing/ceni-release.keystore --ks-pass pass:ceni-hl-2026 --key-pass pass:ceni-hl-2026 --ks-key-alias ceni --out out/CENI-Hors-ligne.apk out/aligned.apk
+          "$BT/apksigner" verify --print-certs out/CENI-Hors-ligne.apk
+          rm out/aligned.apk
+
+      - name: Contrôle final (fichiers de l'APK = original)
+        run: python3 native/verify_apk.py out/CENI-Hors-ligne.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CENI-Hors-ligne-apk
+          path: out/CENI-Hors-ligne.apk

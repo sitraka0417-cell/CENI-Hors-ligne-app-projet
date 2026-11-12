@@ -1,0 +1,8 @@
+{
+  "appId": "mg.ceni.horsligne",
+  "appName": "CENI Hors-ligne",
+  "webDir": "www",
+  "backgroundColor": "#10141a",
+  "server": { "androidScheme": "https" },
+  "android": { "allowMixedContent": false }
+}
