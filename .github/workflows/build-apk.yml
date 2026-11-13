@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      APP_VERSION: "2.6"
+      APP_VERSION: "2.7"
       APP_CODE: ${{ github.run_number }}
     steps:
       - uses: actions/checkout@v4

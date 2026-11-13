@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
-"""Réglages Android après « cap add android » : icônes, barre d'état, version."""
+"""Réglages Android après « cap add android » : plugin dossier, icônes, barre d'état, version."""
 import glob, os, re, shutil, sys
 res = 'android/app/src/main/res'
+# 0) plugin natif « dossier des carnets » + MainActivity qui l'enregistre
+jd = 'android/app/src/main/java/mg/ceni/horsligne'
+if not os.path.isdir(jd): sys.exit('ERREUR : dossier Java introuvable : ' + jd)
+for f in ('CeniFolderPlugin.java', 'MainActivity.java'): shutil.copyfile('native/android-java/' + f, jd + '/' + f)
 # 1) icônes (celles de l'application web)
 for d in glob.glob(res + '/mipmap-*'):
     for f in glob.glob(d + '/ic_launcher*'): os.remove(f)

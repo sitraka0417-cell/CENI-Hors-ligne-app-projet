@@ -2,8 +2,11 @@ CENI Hors-ligne — application Android (APK) compilée par GitHub Actions
 ========================================================================
 Dossier web/  = l'application d'origine, INCHANGÉE (octet pour octet). Le workflow vérifie son SHA-256 (SHA256SUMS.txt),
                 puis vérifie encore que les fichiers à l'intérieur de l'APK sont identiques.
-Seule différence dans l'APK : index.html reçoit UNE ligne <script src="native-shim.js"> (pont d'export : la WebView Android
-ne sait pas télécharger un fichier blob, donc « Exporter TOUT » passe par la feuille de partage Android).
+Seule différence dans l'APK : index.html reçoit DEUX lignes <script> :
+  - native-shim.js   : pont d'export (la WebView Android ne sait pas télécharger un fichier blob : « Exporter TOUT » passe par la feuille de partage).
+  - native-folder.js : choix d'un DOSSIER de carnets (☰ Menu > 📂 Dossier des carnets). À chaque ouverture de l'application, si le dossier
+    contient des carnets qui ne sont pas encore dans l'application, elle demande « Importer maintenant ? ». Les images passent par l'import
+    existant de l'application (aucun ZIP, pas de limite de mémoire).
 
 UTILISATION
 1. Créez un dépôt GitHub (de préférence PRIVÉ), envoyez TOUT le contenu de ce dossier (y compris .github/ et signing/).
